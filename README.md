@@ -23,12 +23,12 @@ Finally, the `helper/` folder is for Pytorch. `img/` is for documentation images
 2. Download `data/object_detection_model.pt` from: https://drive.google.com/file/d/1KKbfRWbitGK83OS16DuSuMgf_4L6aJDj/view?usp=sharing
 3. `python video-stitching-detection.py`
 - this python file will run four stitches from the 4 commands at the bottom, e.g. `video_stitch_optical_flow('data/desk-left-right.mp4', 'data/desk-left-right', 0, 15, 390, 'data/desk-left-right.png')`
-- the first argument is the path to the video file to stitch together
-- the second arguemnt is the path to the folder to store/generate the static frames to stitch together
-- the third argument is the rotation (e.g. if drone is flying left to right, rotation is 0, but if the drone is flying bottom to up, rotation is 270)
-- the fourth argument is the number of frames so skip for each static frame to stitch
-- the fifth argument is the last frame to process
-- the sixth argument is the output path of the final stitched image.
+  - the first argument is the path to the video file to stitch together
+  - the second arguemnt is the path to the folder to store/generate the static frames to stitch together
+  - the third argument is the rotation (e.g. if drone is flying left to right, rotation is 0, but if the drone is flying bottom to up, rotation is 270)
+  - the fourth argument is the number of frames so skip for each static frame to stitch
+  - the fifth argument is the last frame to process
+  - the sixth argument is the output path of the final stitched image.
 - Finally, object detection code will run on `data/desk-left-right.png`. Since we trained our model on desk setups, outputting the detected results in `data/left-right-detected.png`.
 
 ---
