@@ -11,7 +11,7 @@ The `data/` folder contains all the input videos, as well as intermediate result
 Finally, the `helper/` folder is for Pytorch. `img/` is for documentation images.
 
 ### Installation and Setting Up
-1. `pip install -r requirements.txt` in a `Python3.6` virtual environment
+1. `pip install -r requirements.txt` in a `Python3.6.10` virtual environment
 - Note: some packages might have to be manually installed/removed depending on Operating System
 2. Download `data/object_detection_model.pt` from: https://drive.google.com/file/d/1KKbfRWbitGK83OS16DuSuMgf_4L6aJDj/view?usp=sharing
 3. `python video-stitching-detection.py`
