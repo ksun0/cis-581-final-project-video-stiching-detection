@@ -13,6 +13,7 @@ Finally, the `helper/` folder is for Pytorch. `img/` is for documentation images
 ### Installation and Setting Up
 1. `pip install -r requirements.txt` in a `Python3.6` virtual environment
 - Note: some packages might have to be manually installed/removed depending on Operating System
+- Pay special attention to scikit-image and pytorch (torch and torchvision)
 2. Download `data/object_detection_model.pt` from: https://drive.google.com/file/d/1KKbfRWbitGK83OS16DuSuMgf_4L6aJDj/view?usp=sharing
 3. `python video-stitching-detection.py`
 - this python file will run four stitches from the 4 commands at the bottom, e.g. `video_stitch_optical_flow('data/desk-left-right.mp4', 'data/desk-left-right', 0, 15, 390, 'data/desk-left-right.png')`
