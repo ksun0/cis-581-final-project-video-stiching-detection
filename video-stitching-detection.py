@@ -614,14 +614,19 @@ def video_stitch_optical_flow(video_path, frame_folder_path, rotation,
     cap.release()
     cv2.destroyAllWindows()
 
+video_stitch_optical_flow('data/desk.mp4', 'data/desk',
+                          0, 15, 390, 'data/desk.png')
+
+# OBJECT DETECTION
+
 
 # In[240]:
 
 
 # frame_stride = 15  # every 15 frames, we will extract image frame from video to stitch: smaller more fine-tune/smooth but longer to run
 # frame_break = 390  # how many frames to process based on length of video
-video_stitch_optical_flow('data/desk-left-right.mp4', 'data/desk-left-right',
-                          0, 15, 390, 'data/desk-left-right.png')
+# video_stitch_optical_flow('data/desk-left-right.mp4', 'data/desk-left-right',
+#                           0, 15, 390, 'data/desk-left-right.png')
 
 
 # In[239]:
@@ -629,23 +634,23 @@ video_stitch_optical_flow('data/desk-left-right.mp4', 'data/desk-left-right',
 
 # https://pixabay.com/videos/from-the-air-from-above-9798/
 # rotation is 270
-video_stitch_optical_flow('data/forest.mp4', 'data/forest', 270, 50, 1101,
-                          'data/forest.png')
+# video_stitch_optical_flow('data/forest.mp4', 'data/forest', 270, 50, 1101,
+#                           'data/forest.png')
 
 
 # In[232]:
 
 
 # https://pixabay.com/videos/port-yachts-water-sea-boat-marina-33014/, reversed with an online tool called clideo
-video_stitch_optical_flow('data/boat.mp4', 'data/boat', 0, 100, 900,
-                          'data/boat.png')
+# video_stitch_optical_flow('data/boat.mp4', 'data/boat', 0, 100, 900,
+#                           'data/boat.png')
 
 
 # In[231]:
 
 
-video_stitch_optical_flow('data/solar-panel.mp4', 'data/solar-panel', 270, 50,
-                          1000, 'data/solar-panel.png')
+# video_stitch_optical_flow('data/solar-panel.mp4', 'data/solar-panel', 270, 50,
+#                           1000, 'data/solar-panel.png')
 
 
 # ## Future Improvement
