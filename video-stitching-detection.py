@@ -17,6 +17,7 @@
 
 from __future__ import division, print_function
 import warnings
+import matplotlib
 import matplotlib.pyplot as plt
 from scipy.spatial.distance import cdist
 from scipy.ndimage import rotate
@@ -40,7 +41,23 @@ from skimage.transform import warp
 from skimage.measure import ransac
 from skimage.measure import label
 from skimage.graph import route_through_array
+import torch
+import torchvision
+from torchvision import transforms
+from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 warnings.filterwarnings("ignore")
+      
+def get_object_detection_model(num_classes):
+    # load an instance segmentation model pre-trained on COCO
+    model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=True)
+
+    # get the number of input features for the classifier
+    in_features = model.roi_heads.box_predictor.cls_score.in_features
+    
+    # replace the pre-trained head with a new one
+    model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
+
+    return model
 
 # ## Utility Functions
 # Several utility functions will be defined and used frequently before process the individual panorama pictures or video frames.
@@ -615,19 +632,81 @@ def video_stitch_optical_flow(video_path, frame_folder_path, rotation,
     cv2.destroyAllWindows()
 
 video_stitch_optical_flow('data/desk.mp4', 'data/desk',
-                          0, 15, 390, 'data/desk.png')
+                          270, 15, 390, 'data/desk.png')
+t = Image.open("data/desk.png").convert("RGB")
+img = transforms.ToTensor()(t).squeeze()
 
-# OBJECT DETECTION
+# put the model in evaluation mode
+# 1 for background and 4 main classes
+num_classes = 1 + 4
+device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+model = get_object_detection_model(num_classes)
+model.load_state_dict(torch.load("data/object_detection_model.pt"))
+model.to(device)
+model.eval()
+with torch.no_grad():
+    prediction = model([img.to(device)])
+    
+image = Image.fromarray(img.mul(255).permute(1, 2, 0).byte().numpy())
+plt.figure()
+figure, ax = plt.subplots(1)
+cmap = plt.get_cmap('tab20b')
+colors = [cmap(i) for i in np.linspace(0, 1, 20)]
+labels = {1: 'monitor', 2: 'keyboard', 3: 'desktop', 4: 'plant'}
 
+for idx, (box, score, class_name) in enumerate(zip(prediction[0]['boxes'], prediction[0]['scores'], prediction[0]['labels'])):
+    if idx in [0, 1, 9]:
+        x, y = box[0], box[1]
+        len_x, len_y = box[2] - box[0], box[3] - box[1]
+        rect = matplotlib.patches.Rectangle((x, y), len_x, len_y, edgecolor=colors[int(class_name.cpu().numpy())], facecolor="none")
+        ax.add_patch(rect)
+        plt.text(x, y, s=labels[int(class_name.cpu().numpy())], color='white', verticalalignment='top',
+                    bbox={'color': colors[int(class_name.cpu().numpy())], 'pad': 0})
 
-# In[240]:
+ax.imshow(image)
+plt.axis('off')
+plt.savefig("data/desk-detected")
+plt.show()
 
 
 # frame_stride = 15  # every 15 frames, we will extract image frame from video to stitch: smaller more fine-tune/smooth but longer to run
 # frame_break = 390  # how many frames to process based on length of video
 # video_stitch_optical_flow('data/desk-left-right.mp4', 'data/desk-left-right',
 #                           0, 15, 390, 'data/desk-left-right.png')
+# OBJECT DETECTION
+# # pick one image from the test set
+# t = Image.open("data/desk-left-right.png").convert("RGB")
+# img = transforms.ToTensor()(t).squeeze()
 
+# # put the model in evaluation mode
+# # 1 for background and 4 main classes
+# num_classes = 1 + 4
+# device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+# model = get_object_detection_model(num_classes)
+# model.load_state_dict(torch.load("data/object_detection_model.pt"))
+# model.to(device)
+# model.eval()
+# with torch.no_grad():
+#     prediction = model([img.to(device)])
+
+# image = Image.fromarray(img.mul(255).permute(1, 2, 0).byte().numpy())
+# plt.figure()
+# figure, ax = plt.subplots(1)
+# cmap = plt.get_cmap('tab20b')
+# colors = [cmap(i) for i in np.linspace(0, 1, 20)]
+
+# for box, score, class_name in zip(prediction[0]['boxes'], prediction[0]['scores'], prediction[0]['labels']):
+#   if score > 0.29:
+#     x, y = box[0], box[1]
+#     len_x, len_y = box[2] - box[0], box[3] - box[1]
+#     rect = matplotlib.patches.Rectangle((x, y), len_x, len_y, edgecolor=colors[0], facecolor="none")
+#     ax.add_patch(rect)
+#     plt.text(x, y, s="monitor", color='white', verticalalignment='top',
+#                 bbox={'color': colors[0], 'pad': 0})
+
+# ax.imshow(image)
+# plt.axis('off')
+# plt.savefig("data/desk-left-right-detected")
 
 # In[239]:
 
